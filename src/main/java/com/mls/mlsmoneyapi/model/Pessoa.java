@@ -1,5 +1,6 @@
 package com.mls.mlsmoneyapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,4 +30,10 @@ public class Pessoa {
     @NotNull
     @Column(name="ativo")
     private Boolean ativo;
+
+    @JsonIgnore
+    @Transient //Anotações para o Jackson e Hibernate não serializarem esse item
+    public Boolean isInativo(){
+        return !this.ativo;
+    }
 }
