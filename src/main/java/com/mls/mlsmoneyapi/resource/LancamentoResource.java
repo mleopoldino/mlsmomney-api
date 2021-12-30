@@ -4,6 +4,7 @@ import com.mls.mlsmoneyapi.event.RecursoCriadoEvent;
 import com.mls.mlsmoneyapi.exception.MlsmoneyExceptionHandler;
 import com.mls.mlsmoneyapi.model.Lancamento;
 import com.mls.mlsmoneyapi.repository.LancamentoRepository;
+import com.mls.mlsmoneyapi.repository.filter.LancamentoFilter;
 import com.mls.mlsmoneyapi.service.LancamentoService;
 import com.mls.mlsmoneyapi.service.exception.PessoaInexistenteOuInativaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +39,8 @@ public class LancamentoResource {
     MessageSource messageSource;
 
     @GetMapping
-    public List<Lancamento> listar(){
-        return lancamentoRepository.findAll();
+    public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter){
+        return lancamentoRepository.filtrar(lancamentoFilter);
     }
 
     @GetMapping("/{codigo}")
@@ -53,6 +55,12 @@ public class LancamentoResource {
         Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getCodigo()));
         return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
+    }
+
+    @DeleteMapping("/{codigo}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long codigo){
+        lancamentoRepository.deleteById(codigo);
     }
 
     @ExceptionHandler({PessoaInexistenteOuInativaException.class})
