@@ -68,7 +68,6 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery{
 
         query.setFirstResult(primeiroRegistroDaPagina);
         query.setMaxResults(totsalRegistrosPorPagina);
-
     }
 
     private Long total(LancamentoFilter lancamentoFilter) {
@@ -78,7 +77,6 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery{
 
         Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
         criteria.where(predicates);
-
         criteria.select(builder.count(root));
 
         return manager.createQuery(criteria).getSingleResult();
