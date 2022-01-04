@@ -7,6 +7,8 @@ import com.mls.mlsmoneyapi.repository.LancamentoRepository;
 import com.mls.mlsmoneyapi.repository.filter.LancamentoFilter;
 import com.mls.mlsmoneyapi.service.LancamentoService;
 import com.mls.mlsmoneyapi.service.exception.PessoaInexistenteOuInativaException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -26,6 +28,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/lancamentos")
+@Api(value = "API Rest - Lançamentos")
+@CrossOrigin(origins = "*")
 public class LancamentoResource {
 
     @Autowired
@@ -41,17 +45,20 @@ public class LancamentoResource {
     MessageSource messageSource;
 
     @GetMapping
+    @ApiOperation(value = "Buscar Lançamentos")
     public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
         return lancamentoRepository.filtrar(lancamentoFilter, pageable);
     }
 
     @GetMapping("/{codigo}")
+    @ApiOperation(value = "Buscar Lançamentos pelo Id")
     public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable long codigo){
         Optional<Lancamento> lancamento = lancamentoRepository.findById(codigo);
         return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
+    @ApiOperation(value = "Criar Lançamentos")
     public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response){
 
         Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
@@ -61,6 +68,7 @@ public class LancamentoResource {
 
     @DeleteMapping("/{codigo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "Deletar um Lançamentos pelo Id")
     public void remover(@PathVariable Long codigo){
         lancamentoRepository.deleteById(codigo);
     }
