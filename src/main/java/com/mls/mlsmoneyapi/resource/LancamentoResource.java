@@ -7,8 +7,8 @@ import com.mls.mlsmoneyapi.repository.LancamentoRepository;
 import com.mls.mlsmoneyapi.repository.filter.LancamentoFilter;
 import com.mls.mlsmoneyapi.service.LancamentoService;
 import com.mls.mlsmoneyapi.service.exception.PessoaInexistenteOuInativaException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -22,13 +22,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/lancamentos")
-@Api(value = "API Rest - Lançamentos")
+@Tag(name = "API Rest - Lançamentos")
 @CrossOrigin(origins = "*")
 public class LancamentoResource {
 
@@ -45,20 +44,20 @@ public class LancamentoResource {
     MessageSource messageSource;
 
     @GetMapping
-    @ApiOperation(value = "Buscar Lançamentos")
+    @Operation(summary = "Buscar Lançamentos")
     public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
         return lancamentoRepository.filtrar(lancamentoFilter, pageable);
     }
 
     @GetMapping("/{codigo}")
-    @ApiOperation(value = "Buscar Lançamentos pelo Id")
+    @Operation(summary = "Buscar Lançamentos pelo Id")
     public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable long codigo){
         Optional<Lancamento> lancamento = lancamentoRepository.findById(codigo);
         return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    @ApiOperation(value = "Criar Lançamentos")
+    @Operation(summary = "Criar Lançamentos")
     public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response){
 
         Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
@@ -68,7 +67,7 @@ public class LancamentoResource {
 
     @DeleteMapping("/{codigo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "Deletar um Lançamentos pelo Id")
+    @Operation(summary =  "Deletar um Lançamentos pelo Id")
     public void remover(@PathVariable Long codigo){
         lancamentoRepository.deleteById(codigo);
     }

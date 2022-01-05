@@ -3,8 +3,8 @@ package com.mls.mlsmoneyapi.resource;
 import com.mls.mlsmoneyapi.event.RecursoCriadoEvent;
 import com.mls.mlsmoneyapi.model.Categoria;
 import com.mls.mlsmoneyapi.repository.CategoriaRepository;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/categorias")
-@Api(value = "API Rest - Categorias")
+@Tag(name = "API Rest - Categorias")
 @CrossOrigin(origins = "*")
 public class CategoriaResource {
 
@@ -30,14 +30,14 @@ public class CategoriaResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
-    @ApiOperation(value = "Listar Categorias")
+    @Operation(summary = "Listar Categorias")
     public List<Categoria> listar(){
         List<Categoria> categorias = categoriaRepository.findAll();
         return categorias;
     }
 
     @PostMapping
-    @ApiOperation(value = "Criar uma nova Categoria")
+    @Operation(summary = "Criar uma nova Categoria")
     public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response){
         Categoria categoriaSalva = categoriaRepository.save(categoria);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
@@ -45,7 +45,7 @@ public class CategoriaResource {
     }
 
     @GetMapping("/{codigo}")
-    @ApiOperation(value = "Buscar Categoria por Id")
+    @Operation(summary = "Buscar Categoria por Id")
     public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long codigo) {
         Optional<Categoria> categoria = categoriaRepository.findById(codigo);
         if(categoria.isPresent()){

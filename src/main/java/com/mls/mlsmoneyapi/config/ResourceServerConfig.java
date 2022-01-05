@@ -43,6 +43,7 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter{
 
         http.authorizeRequests()
                 .antMatchers("/categorias").permitAll()
+                .antMatchers("/v3/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

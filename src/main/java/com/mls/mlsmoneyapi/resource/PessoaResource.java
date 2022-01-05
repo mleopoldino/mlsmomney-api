@@ -4,9 +4,9 @@ import com.mls.mlsmoneyapi.event.RecursoCriadoEvent;
 import com.mls.mlsmoneyapi.model.Pessoa;
 import com.mls.mlsmoneyapi.repository.PessoaRepository;
 import com.mls.mlsmoneyapi.service.PessoaService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/pessoas")
-@Api(value = "API Rest - Pessoas")
+@Tag(name = "API Rest - Pessoas")
 @CrossOrigin(origins = "*")
 public class PessoaResource {
 
@@ -35,14 +35,14 @@ public class PessoaResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
-    @ApiOperation(value = "Buscar Pessoas Cadastradas")
+    @Operation(summary ="Buscar Pessoas Cadastradas")
     public List<Pessoa> listar(){
         List<Pessoa> pessoa = pessoaRepository.findAll();
         return pessoa;
     }
 
     @GetMapping("/{codigo}")
-    @ApiOperation(value = "Buscar Pessoas Cadastradas pelo ID")
+    @Operation(summary = "Buscar Pessoas Cadastradas pelo ID")
     public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo) {
         Optional<Pessoa> pessoa = pessoaRepository.findById(codigo);
         if(pessoa.isPresent()){
@@ -53,7 +53,7 @@ public class PessoaResource {
     }
 
     @PostMapping
-    @ApiOperation(value = "Cadastrar Pessoa")
+    @Operation(summary = "Cadastrar Pessoa")
     public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));
@@ -61,21 +61,21 @@ public class PessoaResource {
     }
 
     @DeleteMapping("/{codigo}")
-    @ApiOperation(value = "Deletar uam Pessoa Cadastrada")
+    @Operation(summary = "Deletar uam Pessoa Cadastrada")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long codigo){
         pessoaRepository.deleteById(codigo);
     }
 
     @PutMapping("/{codigo}")
-    @ApiOperation(value = "Aletar o cadastro de uma  Pessoa")
+    @Operation(summary = "Aletar o cadastro de uma  Pessoa")
     public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
         Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
         return ResponseEntity.ok(pessoaSalva);
     }
 
     @PutMapping("/{codigo}/ativo")
-    @ApiOperation(value = "Atualizar propriedades de uma Pessoa Cadastrada")
+    @Operation(summary = "Atualizar propriedades de uma Pessoa Cadastrada")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo){
         pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
